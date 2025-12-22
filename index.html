@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>網路架設丙級 - 子網路切割練習</title>
+  <title>子網路切割練習（網路架設丙級）</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
   <style>
     body { margin-top: 30px; font-size: 18px; }
@@ -20,30 +18,9 @@
       font-family: "Courier New", monospace;
     }
 
-    /* ===== 手機板簡化 ===== */
     @media (max-width: 768px) {
-
       h2 { font-size: 22px; }
-
-      .form-horizontal .control-label {
-        text-align: left;
-        margin-bottom: 6px;
-      }
-
-      .btn-lg {
-        width: 100%;
-        margin-bottom: 10px;
-      }
-
-      /* 手機隱藏 IP 出題（避免亂洗題） */
-      .btn-generate {
-        display: none;
-      }
-
-      /* 解題步驟預設收起 */
-      #explanation {
-        display: none;
-      }
+      .btn-lg { width: 100%; margin-bottom: 10px; }
     }
   </style>
 </head>
@@ -56,41 +33,31 @@
 
     <div class="form-group">
       <label class="control-label col-sm-2">座號：</label>
-      <div class="col-sm-10">
-        <p class="form-control-static" id="NO"></p>
-      </div>
+      <div class="col-sm-10"><p class="form-control-static" id="NO"></p></div>
     </div>
 
     <div class="form-group">
       <label class="control-label col-sm-2">Server IP：</label>
-      <div class="col-sm-10">
-        <p class="form-control-static" id="sIP"></p>
-      </div>
+      <div class="col-sm-10"><p class="form-control-static" id="sIP"></p></div>
     </div>
 
     <div class="form-group">
       <label class="control-label col-sm-2">Client IP：</label>
-      <div class="col-sm-10">
-        <input type="text" class="form-control" id="cIP">
-      </div>
+      <div class="col-sm-10"><input type="text" class="form-control" id="cIP"></div>
     </div>
 
     <div class="form-group">
       <label class="control-label col-sm-2">Client 子遮罩：</label>
-      <div class="col-sm-10">
-        <input type="text" class="form-control" id="netMask">
-      </div>
+      <div class="col-sm-10"><input type="text" class="form-control" id="netMask"></div>
     </div>
 
     <div class="form-group">
       <label class="control-label col-sm-2">解答結果：</label>
-      <div class="col-sm-10">
-        <p class="form-control-static" id="result"></p>
-      </div>
+      <div class="col-sm-10"><p class="form-control-static" id="result"></p></div>
     </div>
 
     <div class="form-group text-center">
-      <button type="button" class="btn btn-primary btn-lg btn-generate" onclick="quesfun()">IP 出題</button>
+      <button type="button" class="btn btn-primary btn-lg" onclick="quesfun()">IP 出題</button>
       <button type="button" class="btn btn-success btn-lg" onclick="checkAns()">檢查答案</button>
       <button type="button" class="btn btn-info btn-lg" onclick="toggleExplain()">解題步驟</button>
     </div>
@@ -98,7 +65,7 @@
     <div class="form-group">
       <label class="control-label col-sm-2">▶ 解題步驟：</label>
       <div class="col-sm-10">
-        <pre id="explanation"></pre>
+        <pre id="explanation" style="display:none;"></pre>
       </div>
     </div>
 
@@ -107,6 +74,7 @@
 
 <script>
   var a1, a2, a3, a4, a5, num;
+  var explainVisible = false;
 
   function rand(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -123,8 +91,8 @@
     document.getElementById("NO").innerText = num;
     document.getElementById("sIP").innerText = `${a1}.${a2}.${a3}.${a4}/${a5}`;
     document.getElementById("result").innerText = "";
-    document.getElementById("explanation").innerText = "";
     document.getElementById("explanation").style.display = "none";
+    explainVisible = false;
   }
 
   function checkAns() {
@@ -132,15 +100,14 @@
     let maskLast = maskMap[a5];
     let block = 256 - maskLast;
     let subnetStart = Math.floor(a4 / block) * block;
+
     let correctIP = `${a1}.${a2}.${a3}.${subnetStart + num}`;
     let correctMask = `255.255.255.${maskLast}`;
 
     let ip = document.getElementById("cIP").value.trim();
     let mask = document.getElementById("netMask").value.trim();
 
-    let msg = "❌ 錯誤";
-    let cls = "text-danger";
-
+    let msg = "❌ 錯誤", cls = "text-danger";
     if (ip === correctIP && mask === correctMask) {
       msg = "✅ 正確！";
       cls = "text-success";
@@ -157,24 +124,57 @@
       return;
     }
 
-    let box = document.getElementById("explanation");
+    const box = document.getElementById("explanation");
 
-    if (box.style.display === "none") {
+    if (!explainVisible) {
+
       let maskLast = {24:0,25:128,26:192,27:224}[a5];
       let block = 256 - maskLast;
       let subnetStart = Math.floor(a4 / block) * block;
+      let clientIP = subnetStart + num;
 
       box.innerText =
-`1️⃣ 網路區段：${a1}.${a2}.${a3}.${a4}/${a5}
-2️⃣ 子網遮罩：255.255.255.${maskLast}
-3️⃣ 區段大小：256 - ${maskLast} = ${block}
-4️⃣ 起始位址：${a1}.${a2}.${a3}.${subnetStart}
-5️⃣ Client IP：${subnetStart} + ${num}`;
+`【網路架設丙級－設定電腦 TCP/IP 參數 解題步驟】
+
+步驟 1️⃣：確認網路區段
+→ ${a1}.${a2}.${a3}.${a4}/${a5}
+
+步驟 2️⃣：查表決定子網路遮罩
+→ /${a5} 的子網路遮罩為：
+→ 255.255.255.${maskLast}
+
+步驟 3️⃣：計算子網路區段大小
+→ 計算方式：256 − ${maskLast}
+→ 區段大小：${block}
+
+步驟 4️⃣：找出子網路區段起始位址
+→ 計算方式：${a4} ÷ ${block} 取整數 × ${block}
+→ 子網路起始位址：
+→ ${a1}.${a2}.${a3}.${subnetStart}
+
+步驟 5️⃣：計算 Client IP（考試規則）
+→ Client IP ＝ 區段起始位址 ＋ 座號
+→ ${subnetStart} ＋ ${num} ＝ ${clientIP}
+
+✅ Client IP：${a1}.${a2}.${a3}.${clientIP}
+✅ 子網路遮罩：255.255.255.${maskLast}
+
+【考試提醒】
+✔ Client IP 必須使用「子網路區段起始位址 + 工作崗位號碼」
+✔ 不可使用網路位址或廣播位址`;
 
       box.style.display = "block";
+      explainVisible = true;
+
     } else {
       box.style.display = "none";
+      explainVisible = false;
     }
+  }
+
+  /* 📱 手機：載入自動出一題 */
+  if (window.innerWidth <= 768) {
+    window.onload = quesfun;
   }
 </script>
 </body>
