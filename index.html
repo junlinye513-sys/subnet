@@ -137,7 +137,8 @@
   document.getElementById("explanation").style.display = "none";
   explainVisible = false;
 }
-  
+  document.getElementById("cIP").focus();
+
   function checkAns() {
     let maskMap = {24:0,25:128,26:192,27:224};
     let maskLast = maskMap[a5];
