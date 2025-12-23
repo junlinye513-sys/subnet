@@ -1,14 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-Hant">
 <head>
-  <title>子網路切割練習（網路架設丙級）</title>
   <meta charset="utf-8">
+
+  <title>子網路切割練習｜網路架設丙級學科｜IP 子網路計算教學</title>
+
+  <meta name="description"
+    content="子網路切割練習系統，專為網路架設丙級學科考試設計，提供 IP 位址、子網路遮罩計算與完整解題步驟，適合考前練習與教學使用。">
+
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="canonical" href="https://junlinye513-sys.github.io/subnet/">
+
+  <link rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 
   <style>
-    body { margin-top: 30px; font-size: 18px; }
+    body {
+      margin-top: 30px;
+      font-size: 18px;
+      font-family: "Microsoft JhengHei", sans-serif;
+    }
     #result { font-weight: bold; }
     pre {
       background: #f7f7f7;
@@ -17,9 +29,13 @@
       white-space: pre-wrap;
       font-family: "Courier New", monospace;
     }
-
+    .intro {
+      margin: 10px auto 30px;
+      max-width: 900px;
+      color: #555;
+    }
     @media (max-width: 768px) {
-      h2 { font-size: 22px; }
+      h1 { font-size: 24px; }
       .btn-lg { width: 100%; margin-bottom: 10px; }
     }
   </style>
@@ -27,33 +43,52 @@
 
 <body>
 <div class="container">
-  <h2 class="text-center">子網路切割練習（網路架設丙級）</h2>
+
+  <!-- ✅ SEO 主標題 -->
+  <h1 class="text-center">子網路切割練習（網路架設丙級）</h1>
+
+  <!-- ✅ SEO 說明文字 -->
+  <p class="intro text-center">
+    本頁為「網路架設丙級」學科考試使用的子網路切割練習系統，
+    提供 IP 位址、子網路遮罩計算與完整解題步驟，
+    適合考前練習與教師教學使用。
+  </p>
 
   <form class="form-horizontal">
 
     <div class="form-group">
       <label class="control-label col-sm-2">座號：</label>
-      <div class="col-sm-10"><p class="form-control-static" id="NO"></p></div>
+      <div class="col-sm-10">
+        <p class="form-control-static" id="NO"></p>
+      </div>
     </div>
 
     <div class="form-group">
       <label class="control-label col-sm-2">Server IP：</label>
-      <div class="col-sm-10"><p class="form-control-static" id="sIP"></p></div>
+      <div class="col-sm-10">
+        <p class="form-control-static" id="sIP"></p>
+      </div>
     </div>
 
     <div class="form-group">
       <label class="control-label col-sm-2">Client IP：</label>
-      <div class="col-sm-10"><input type="text" class="form-control" id="cIP"></div>
+      <div class="col-sm-10">
+        <input type="text" class="form-control" id="cIP">
+      </div>
     </div>
 
     <div class="form-group">
       <label class="control-label col-sm-2">Client 子遮罩：</label>
-      <div class="col-sm-10"><input type="text" class="form-control" id="netMask"></div>
+      <div class="col-sm-10">
+        <input type="text" class="form-control" id="netMask">
+      </div>
     </div>
 
     <div class="form-group">
       <label class="control-label col-sm-2">解答結果：</label>
-      <div class="col-sm-10"><p class="form-control-static" id="result"></p></div>
+      <div class="col-sm-10">
+        <p class="form-control-static" id="result"></p>
+      </div>
     </div>
 
     <div class="form-group text-center">
@@ -172,10 +207,11 @@
     }
   }
 
-  /* 📱 手機：載入自動出一題 */
+  /* 📱 手機載入自動出題 */
   if (window.innerWidth <= 768) {
     window.onload = quesfun;
   }
 </script>
+
 </body>
 </html>
