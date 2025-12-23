@@ -123,26 +123,29 @@
   a5 = rand(24, 27);
   num = rand(1, 30);
 
-  // 顯示新題目
   document.getElementById("NO").innerText = num;
   document.getElementById("sIP").innerText = `${a1}.${a2}.${a3}.${a4}/${a5}`;
 
-  // ✅ 清空上一題作答（重點）
-  document.getElementById("cIP").value = "";
-  document.getElementById("netMask").value = "";
+  // 清空上一題
+  const ipInput = document.getElementById("cIP");
+  const maskInput = document.getElementById("netMask");
+
+  ipInput.value = "";
+  maskInput.value = "";
   document.getElementById("result").innerText = "";
   document.getElementById("result").className = "";
 
-  // 解題步驟收起
   document.getElementById("explanation").style.display = "none";
   explainVisible = false;
-}
-  
-  // 延遲一下再設定焦點，避免被按鈕吃掉
-setTimeout(() => {
-  document.getElementById("cIP").focus();
-}, 50);
 
+  // ✅ 關鍵：等畫面完全穩定再 focus
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      ipInput.focus();
+      ipInput.select(); // 游標一定出現
+    });
+  });
+}
 
   function checkAns() {
     let maskMap = {24:0,25:128,26:192,27:224};
