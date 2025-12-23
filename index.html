@@ -116,20 +116,28 @@
   }
 
   function quesfun() {
-    a1 = rand(1, 223);
-    a2 = rand(0, 255);
-    a3 = rand(0, 255);
-    a4 = rand(0, 255);
-    a5 = rand(24, 27);
-    num = rand(1, 30);
+  a1 = rand(1, 223);
+  a2 = rand(0, 255);
+  a3 = rand(0, 255);
+  a4 = rand(0, 255);
+  a5 = rand(24, 27);
+  num = rand(1, 30);
 
-    document.getElementById("NO").innerText = num;
-    document.getElementById("sIP").innerText = `${a1}.${a2}.${a3}.${a4}/${a5}`;
-    document.getElementById("result").innerText = "";
-    document.getElementById("explanation").style.display = "none";
-    explainVisible = false;
-  }
+  // 顯示新題目
+  document.getElementById("NO").innerText = num;
+  document.getElementById("sIP").innerText = `${a1}.${a2}.${a3}.${a4}/${a5}`;
 
+  // ✅ 清空上一題作答（重點）
+  document.getElementById("cIP").value = "";
+  document.getElementById("netMask").value = "";
+  document.getElementById("result").innerText = "";
+  document.getElementById("result").className = "";
+
+  // 解題步驟收起
+  document.getElementById("explanation").style.display = "none";
+  explainVisible = false;
+}
+  
   function checkAns() {
     let maskMap = {24:0,25:128,26:192,27:224};
     let maskLast = maskMap[a5];
