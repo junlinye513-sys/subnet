@@ -2,109 +2,149 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="utf-8">
-
-  <title>子網路切割練習｜網路架設丙級學科｜IP 子網路計算教學</title>
-
-  <meta name="description"
-    content="子網路切割練習系統，專為網路架設丙級學科考試設計，提供 IP 位址、子網路遮罩計算與完整解題步驟，適合考前練習與教學使用。">
-
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>子網路切割練習系統｜網路架設丙級學科｜IP Subnet 計算教學工具</title>
+
+  <meta name="description" content="專為「網路架設丙級」技術士考試設計的子網路切割練習系統。提供自動出題、IP 位址計算、255.255.255.X 子網路遮罩計算與完整解題步驟教學，適合考前衝刺練習與教師教學。">
+  <meta name="keywords" content="子網路切割, 網路架設丙級, IP計算, 子網路遮罩, 丙級檢定, 網路架設術科, 11800-網路架設, 計算步驟">
+  <meta name="author" content="Junlin Ye">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://junlinye513-sys.github.io/subnet/">
+  <meta property="og:title" content="網路架設丙級：子網路切割練習系統">
+  <meta property="og:description" content="還在煩惱子網路切割怎麼算嗎？這套練習工具幫你快速掌握丙級考試重點！">
+  <meta property="og:site_name" content="網路架設練習工具">
 
   <link rel="canonical" href="https://junlinye513-sys.github.io/subnet/">
 
-  <link rel="stylesheet"
-    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 
   <style>
     body {
       margin-top: 30px;
       font-size: 18px;
-      font-family: "Microsoft JhengHei", sans-serif;
+      font-family: "PingFang TC", "Heiti TC", "Microsoft JhengHei", sans-serif;
+      background-color: #fcfcfc;
     }
-    #result { font-weight: bold; }
+    .main-container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+    h1 {
+      color: #2c3e50;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    #result { font-weight: bold; font-size: 22px; }
     pre {
-      background: #f7f7f7;
-      padding: 12px;
-      border-radius: 5px;
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
       white-space: pre-wrap;
-      font-family: "Courier New", monospace;
+      font-family: "Consolas", "Monaco", monospace;
+      border-left: 5px solid #5bc0de;
+      line-height: 1.6;
     }
     .intro {
       margin: 10px auto 30px;
-      max-width: 900px;
-      color: #555;
+      max-width: 800px;
+      color: #666;
+      line-height: 1.8;
+    }
+    .info-section {
+      margin-top: 40px;
+      padding: 20px;
+      background: #f1f8ff;
+      border-radius: 8px;
+      border: 1px solid #d1e7ff;
     }
     @media (max-width: 768px) {
       h1 { font-size: 24px; }
-      .btn-lg { width: 100%; margin-bottom: 10px; }
+      .btn-lg { width: 100%; margin-bottom: 15px; }
+      .main-container { padding: 15px; }
     }
   </style>
 </head>
 
 <body>
 <div class="container">
+  <div class="main-container">
+    <header class="text-center">
+      <h1>子網路切割練習（網路架設丙級）</h1>
+      <p class="intro">
+        本頁為針對<strong>「11800 網路架設」丙級技術士</strong>學科考試開發的子網路切割練習工具。<br>
+        提供自動隨機出題、IP 位址校對與詳細的計算步驟說明，幫助考生快速掌握 CIDR (/24~/27) 計算邏輯。
+      </p>
+    </header>
 
-  <!-- ✅ SEO 主標題 -->
-  <h1 class="text-center">子網路切割練習（網路架設丙級）</h1>
+    <main>
+      <form class="form-horizontal">
+        <div class="form-group">
+          <label class="control-label col-sm-3">工作崗位（座號）：</label>
+          <div class="col-sm-9">
+            <p class="form-control-static" id="NO" style="font-size: 24px; color: #d9534f; font-weight: bold;">--</p>
+          </div>
+        </div>
 
-  <!-- ✅ SEO 說明文字 -->
-  <p class="intro text-center">
-    本頁為「網路架設丙級」學科考試使用的子網路切割練習系統，
-    提供 IP 位址、子網路遮罩計算與完整解題步驟，
-    適合考前練習與教師教學使用。
-  </p>
+        <div class="form-group">
+          <label class="control-label col-sm-3">伺服器 IP (Server)：</label>
+          <div class="col-sm-9">
+            <p class="form-control-static" id="sIP" style="font-size: 20px; color: #337ab7; font-weight: bold;">請點擊下方出題</p>
+          </div>
+        </div>
 
-  <form class="form-horizontal">
+        <div class="form-group">
+          <label class="control-label col-sm-3">用戶端 IP (Client)：</label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control input-lg" id="cIP" placeholder="例如: 192.168.1.1">
+          </div>
+        </div>
 
-    <div class="form-group">
-      <label class="control-label col-sm-2">座號：</label>
-      <div class="col-sm-10">
-        <p class="form-control-static" id="NO"></p>
-      </div>
-    </div>
+        <div class="form-group">
+          <label class="control-label col-sm-3">子網路遮罩 (Mask)：</label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control input-lg" id="netMask" placeholder="例如: 255.255.255.0">
+          </div>
+        </div>
 
-    <div class="form-group">
-      <label class="control-label col-sm-2">Server IP：</label>
-      <div class="col-sm-10">
-        <p class="form-control-static" id="sIP"></p>
-      </div>
-    </div>
+        <div class="form-group">
+          <label class="control-label col-sm-3">判定結果：</label>
+          <div class="col-sm-9">
+            <p class="form-control-static" id="result"></p>
+          </div>
+        </div>
 
-    <div class="form-group">
-      <label class="control-label col-sm-2">Client IP：</label>
-      <div class="col-sm-10">
-        <input type="text" class="form-control" id="cIP">
-      </div>
-    </div>
+        <div class="form-group text-center">
+          <div class="col-sm-12">
+            <button type="button" class="btn btn-primary btn-lg" onclick="quesfun()">🎲 IP 出題</button>
+            <button type="button" class="btn btn-success btn-lg" onclick="checkAns()">📝 檢查答案</button>
+            <button type="button" class="btn btn-info btn-lg" onclick="toggleExplain()">💡 解題步驟</button>
+          </div>
+        </div>
 
-    <div class="form-group">
-      <label class="control-label col-sm-2">Client 子遮罩：</label>
-      <div class="col-sm-10">
-        <input type="text" class="form-control" id="netMask">
-      </div>
-    </div>
+        <div class="form-group">
+          <div class="col-sm-offset-1 col-sm-10">
+            <pre id="explanation" style="display:none;"></pre>
+          </div>
+        </div>
+      </form>
+    </main>
 
-    <div class="form-group">
-      <label class="control-label col-sm-2">解答結果：</label>
-      <div class="col-sm-10">
-        <p class="form-control-static" id="result"></p>
-      </div>
-    </div>
-
-    <div class="form-group text-center">
-      <button type="button" class="btn btn-primary btn-lg" onclick="quesfun()">IP 出題</button>
-      <button type="button" class="btn btn-success btn-lg" onclick="checkAns()">檢查答案</button>
-      <button type="button" class="btn btn-info btn-lg" onclick="toggleExplain()">解題步驟</button>
-    </div>
-
-    <div class="form-group">
-      <label class="control-label col-sm-2">▶ 解題步驟：</label>
-      <div class="col-sm-10">
-        <pre id="explanation" style="display:none;"></pre>
-      </div>
-    </div>
-
-  </form>
+    <footer class="info-section">
+      <h3>📚 網路架設丙級 - 計算重點筆記</h3>
+      <p>在丙級檢定中，子網路切割是設定「工作站電腦」最重要的步驟：</p>
+      <ul>
+        <li><strong>Client IP 規則：</strong> 子網路區段起始位址 + 工作崗位號碼。</li>
+        <li><strong>遮罩對照：</strong> /24 (0), /25 (128), /26 (192), /27 (224)。</li>
+        <li><strong>注意事項：</strong> 計算時務必避開網路位址 (Network) 與廣播位址 (Broadcast)。</li>
+      </ul>
+    </footer>
+  </div>
 </div>
 
 <script>
@@ -116,39 +156,41 @@
   }
 
   function quesfun() {
-  a1 = rand(1, 223);
-  a2 = rand(0, 255);
-  a3 = rand(0, 255);
-  a4 = rand(0, 255);
-  a5 = rand(24, 27);
-  num = rand(1, 30);
+    a1 = rand(1, 223);
+    a2 = rand(0, 255);
+    a3 = rand(0, 255);
+    a4 = rand(0, 255);
+    a5 = rand(24, 27);
+    num = rand(1, 30);
 
-  document.getElementById("NO").innerText = num;
-  document.getElementById("sIP").innerText = `${a1}.${a2}.${a3}.${a4}/${a5}`;
+    document.getElementById("NO").innerText = num;
+    document.getElementById("sIP").innerText = `${a1}.${a2}.${a3}.${a4}/${a5}`;
 
-  // 清空上一題
-  const ipInput = document.getElementById("cIP");
-  const maskInput = document.getElementById("netMask");
+    const ipInput = document.getElementById("cIP");
+    const maskInput = document.getElementById("netMask");
 
-  ipInput.value = "";
-  maskInput.value = "";
-  document.getElementById("result").innerText = "";
-  document.getElementById("result").className = "";
+    ipInput.value = "";
+    maskInput.value = "";
+    document.getElementById("result").innerText = "";
+    document.getElementById("result").className = "form-control-static";
 
-  document.getElementById("explanation").style.display = "none";
-  explainVisible = false;
+    document.getElementById("explanation").style.display = "none";
+    explainVisible = false;
 
-  // ✅ 關鍵：等畫面完全穩定再 focus
-  requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      ipInput.focus();
-      ipInput.select(); // 游標一定出現
+      requestAnimationFrame(() => {
+        ipInput.focus();
+        ipInput.select();
+      });
     });
-  });
-}
+  }
 
   function checkAns() {
-    let maskMap = {24:0,25:128,26:192,27:224};
+    if (typeof a5 === "undefined") {
+      alert("請先按【IP 出題】");
+      return;
+    }
+    let maskMap = {24:0, 25:128, 26:192, 27:224};
     let maskLast = maskMap[a5];
     let block = 256 - maskLast;
     let subnetStart = Math.floor(a4 / block) * block;
@@ -159,18 +201,19 @@
     let ip = document.getElementById("cIP").value.trim();
     let mask = document.getElementById("netMask").value.trim();
 
-    let msg = "❌ 錯誤", cls = "text-danger";
+    let msg = "❌ 答錯了，再檢查一下喔！";
+    let cls = "text-danger";
+    
     if (ip === correctIP && mask === correctMask) {
-      msg = "✅ 正確！";
+      msg = "🎉 太棒了！計算完全正確！";
       cls = "text-success";
     }
 
     document.getElementById("result").innerText = msg;
-    document.getElementById("result").className = cls;
+    document.getElementById("result").className = "form-control-static " + cls;
   }
 
   function toggleExplain() {
-
     if (typeof a5 === "undefined") {
       alert("請先按【IP 出題】");
       return;
@@ -179,56 +222,48 @@
     const box = document.getElementById("explanation");
 
     if (!explainVisible) {
-
-      let maskLast = {24:0,25:128,26:192,27:224}[a5];
+      let maskLast = {24:0, 25:128, 26:192, 27:224}[a5];
       let block = 256 - maskLast;
       let subnetStart = Math.floor(a4 / block) * block;
       let clientIP = subnetStart + num;
 
       box.innerText =
-`【網路架設丙級－設定電腦 TCP/IP 參數 解題步驟】
+`【解題邏輯分析】
 
-步驟 1️⃣：確認網路區段
-→ ${a1}.${a2}.${a3}.${a4}/${a5}
+📍 題目資訊：${a1}.${a2}.${a3}.${a4} / ${a5}
+📍 工作崗位：${num}
 
-步驟 2️⃣：查表決定子網路遮罩
-→ /${a5} 的子網路遮罩為：
-→ 255.255.255.${maskLast}
+1️⃣ 計算子網路遮罩：
+   前三段為 255.255.255，最後一段由 /${a5} 決定。
+   結果：255.255.255.${maskLast}
 
-步驟 3️⃣：計算子網路區段大小
-→ 計算方式：256 − ${maskLast}
-→ 區段大小：${block}
+2️⃣ 計算區段大小 (Magic Number)：
+   公式：256 − ${maskLast} = ${block}
 
-步驟 4️⃣：找出子網路區段起始位址
-→ 計算方式：${a4} ÷ ${block} 取整數 × ${block}
-→ 子網路起始位址：
-→ ${a1}.${a2}.${a3}.${subnetStart}
+3️⃣ 找出該 IP 所屬區段：
+   計算：${a4} ÷ ${block} = ${(a4/block).toFixed(2)}
+   取整數後相乘：${Math.floor(a4/block)} × ${block} = ${subnetStart}
+   本網段起始位址：${a1}.${a2}.${a3}.${subnetStart}
 
-步驟 5️⃣：計算 Client IP（考試規則）
-→ Client IP ＝ 區段起始位址 ＋ 座號
-→ ${subnetStart} ＋ ${num} ＝ ${clientIP}
+4️⃣ 計算 Client IP：
+   公式：起始位址 ＋ 座號
+   計算：${subnetStart} ＋ ${num} ＝ ${clientIP}
 
-✅ Client IP：${a1}.${a2}.${a3}.${clientIP}
-✅ 子網路遮罩：255.255.255.${maskLast}
-
-【考試提醒】
-✔ Client IP 必須使用「子網路區段起始位址 + 工作崗位號碼」
-✔ 不可使用網路位址或廣播位址`;
+✅ 正確答案：
+   IP 位址：${a1}.${a2}.${a3}.${clientIP}
+   子網路遮罩：255.255.255.${maskLast}`;
 
       box.style.display = "block";
       explainVisible = true;
-
     } else {
       box.style.display = "none";
       explainVisible = false;
     }
   }
 
-  /* 📱 手機載入自動出題 */
   if (window.innerWidth <= 768) {
     window.onload = quesfun;
   }
 </script>
-
 </body>
 </html>
